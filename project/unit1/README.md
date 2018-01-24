@@ -6,6 +6,6 @@ To write and document code to extract all nodes, paths and areas (closed paths) 
 
 
 TODO: 
- Create tables through sql file
+Create tables through sql file
  
- Load XML and format the data
+Load XML and format the data

@@ -18,29 +18,33 @@ nt = open("nt.csv","w")
 wt = open("wt.csv","w")
 
 def createTable():
-     #cur.execute(
-		#"DROP TABLE Node; DROP TABLE Way; DROP TABLE Nodetag; DROP TABLE Waytag;DROP TABLE Waypoints;"
-		#)
-	#generate tables
-     cur.execute(
-		"CREATE TABLE Node ( id INTEGER, lat FLOAT, lon FLOAT, PRIMARY KEY (id) );"
-		)
-	#add a CHECK closed?
-     cur.execute(
-		"CREATE TABLE Way ( id INTEGER PRIMARY KEY, closed BOOLEAN);"
-		)
-     cur.execute(
-		"CREATE TABLE Waypoint ( wayid INTEGER, ordinal INTEGER, nodeid INTEGER, 						FOREIGN KEY (wayid) REFERENCES Way(id), 					FOREIGN KEY (nodeid) REFERENCES Node(id), 						CHECK ordinal>=0 AND ordinal <= COUNT(nodeid) 	 						);"
-		)    
-     cur.execute(
-		"CREATE TABLE Nodetag ( id INTEGER, k TEXT, v TEXT, 						FOREIGN KEY (id) REFERENCES Node(id) 						);"
-		)
+	
+    #drop previous exist tables
+    cur.execute( "DROP TABLE IF EXISTS Node ;")
+    cur.execute( "DROP TABLE IF EXISTS Way ;")
+    cur.execute( "DROP TABLE IF EXISTS Waypoint ;")
+    cur.execute( "DROP TABLE IF EXISTS Nodetag ;")
+    cur.execute( "DROP TABLE IF EXISTS Waytag ;")
 
-     cur.execute(
-		"CREATE TABLE Waytag ( id INTEGER, k TEXT, v TEXT, 						FOREIGN KEY (id) REFERENCES Way(id) 						);"
-		)
+    #generate tables
+    cur.execute(
+         "CREATE TABLE Node ( id INTEGER, lat FLOAT, lon FLOAT, PRIMARY KEY (id) );"
+    )
+    cur.execute(
+        "CREATE TABLE Way ( id INTEGER PRIMARY KEY, closed BOOLEAN );"
+    )
+    cur.execute(
+         "CREATE TABLE Waypoint ( wayid INTEGER, ordinal INTEGER, nodeid INTEGER, FOREIGN KEY (wayid) REFERENCES Way(id), FOREIGN KEY (nodeid) REFERENCES Node(id), CHECK (ordinal>=0 AND ordinal <= rowid ) );"
+    )    
+    cur.execute(
+         "CREATE TABLE Nodetag ( id INTEGER, k TEXT, v TEXT, FOREIGN KEY (id) REFERENCES Node(id) );"
+    )
 
-     conn.commit()
+    cur.execute(
+         "CREATE TABLE Waytag ( id INTEGER, k TEXT, v TEXT, FOREIGN KEY (id) REFERENCES Way(id) );"
+    )
+
+    conn.commit()
 
 def formatData():
      #db

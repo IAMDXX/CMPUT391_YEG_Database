@@ -11,7 +11,11 @@ import os
 conn = sqlite3.connect(":memory:")
 cur = conn.cursor()
 
-db = open("Proj1.csv","w")
+nf = open("nf.csv","w")
+wf = open("wf.csv","w")
+wp = open("wp.csv","w")
+nt = open("nt.csv","w")
+wt = open("wt.csv","w")
 
 def createTable():
      #cur.execute(
@@ -52,12 +56,10 @@ def formatData():
 		 
           # Insert nodes and nodetag
           if (child.tag == 'node'):
-               db.write("INSERT INTO Node VALUES (" + str(child.attrib['id']) +','
-	                                            + str(child.attrib['lat']) +','+ str(child.attrib['lon']) +')'  )
+               nf.write(str(child.attrib['id']) +','+ str(child.attrib['lat']) +','+ str(child.attrib['lon']) )
      
           for tag in child.iter('tag'):
-               db.write("INSERT INTO Nodetag VALUES (" + str(child.attrib['id']) +','
-	                                          + str(tag.attrib['k']) +','+ str(tag.attrib['v']) +")")
+               nt.write(str(child.attrib['id']) +','+ str(tag.attrib['k']) +','+ str(tag.attrib['v']) )
 		 
 	       # Insert ways and Waytag
 	       # Need to check: 
@@ -67,33 +69,33 @@ def formatData():
                ord = 0
                close = False	
                for ref in child.iter('ref'):
-                    db.write("INSERT INTO Waypoint VALUES (" + str(child.attrib['id']) +','
-	                     + str(ord) +','+ str(ref) +')'  )
+                    wp.write(str(child.attrib['id']) +','+ str(ord) +','+ str(ref) )
                     ord += 1
   
                for tag in child.iter('tag'):
                     if 'close' in tag.attrib['v'] or 'Close' in tag.attrib['v']:
                          close = True
-                         db.write("INSERT INTO Waytag VALUES (" + str(child.attrib['id']) +','
-			          + str(tag.attrib['k']) +','+ str(tag.attrib['v']) +")")
+                         wt.write(str(child.attrib['id']) +','+ str(tag.attrib['k']) +','+ str(tag.attrib['v']) )
 
-               db.write("INSERT INTO Way VALUES (" + str(child.attrib['id']) +','+ str(close)  +')')
+               wf.write(str(child.attrib['id']) +','+ str(close))
 
-     
+          nf.close()
+          wf.close()
+          nt.close()
+          wt.close()
+          wp.close()
 		                
     
 
 
 def main():
     
-    # Create the Database Tables
-    createTable()
+     # Create the Database Tables
+     createTable()
     
-    # Load XML and insert the data
-    formatData()
+     # Load XML and insert the data
+     formatData()
     
-    db.close()
-    ct.close()
     
 if __name__ == "__main__":
-	main()
+     main()

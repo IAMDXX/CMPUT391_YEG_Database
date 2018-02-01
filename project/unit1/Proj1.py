@@ -110,22 +110,22 @@ def impCSV():
     with open('wf.csv','rb') as fin: 
         dr = csv.DictReader(fin)
         to_db = [(i['id'], i['closed']) for i in dr]
-    cur.executemany("INSERT INTO Node (id, closed) VALUES (?, ?);", to_db)
+    cur.executemany("INSERT INTO way (id, closed) VALUES (?, ?);", to_db)
     
     with open('nt.csv','rb') as fin: 
         dr = csv.DictReader(fin)
         to_db = [(i['id'], i['k'], i['v']) for i in dr]
-    cur.executemany("INSERT INTO Node (id, k, v) VALUES (?, ?, ?);", to_db)
+    cur.executemany("INSERT INTO notetag (id, k, v) VALUES (?, ?, ?);", to_db)
     
     with open('wt.csv','rb') as fin: 
         dr = csv.DictReader(fin)
         to_db = [(i['id'], i['k'], i['v']) for i in dr]
-    cur.executemany("INSERT INTO Node (id, k, v) VALUES (?, ?, ?);", to_db)
+    cur.executemany("INSERT INTO waytag (id, k, v) VALUES (?, ?, ?);", to_db)
     
     with open('wp.csv','rb') as fin: 
         dr = csv.DictReader(fin)
         to_db = [(i['wayid'], i['ordinal'], i['nodeid']) for i in dr]
-    cur.executemany("INSERT INTO Node (wayid, ordinal, nodeid) VALUES (?, ?, ?);", to_db)    
+    cur.executemany("INSERT INTO waypoint (wayid, ordinal, nodeid) VALUES (?, ?, ?);", to_db)    
     
     con.commit()
     con.close()    

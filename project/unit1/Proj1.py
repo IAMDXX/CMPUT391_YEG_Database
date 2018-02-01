@@ -11,12 +11,6 @@ import os
 conn = sqlite3.connect(":memory:")
 cur = conn.cursor()
 
-nf = open("nf.csv","w")
-wf = open("wf.csv","w")
-wp = open("wp.csv","w")
-nt = open("nt.csv","w")
-wt = open("wt.csv","w")
-
 nodes = []
 
 def createTable():
@@ -48,7 +42,11 @@ def createTable():
     conn.commit()
 
 def formatData():
-     #db
+    nf = open("nf.csv","w")
+    wf = open("wf.csv","w")
+    wp = open("wp.csv","w")
+    nt = open("nt.csv","w")
+    wt = open("wt.csv","w")
      
      # Read the XML file
     tree = ET.parse('edmonton.osm')
@@ -62,7 +60,7 @@ def formatData():
             nodes.append(node.attrib['id'])
    
         for tag in node.iter('tag'):
-            nt.write(str(node.attrib['id']) +','+ str(node.attrib['k']) +','+ str(node.attrib['v']) )
+            nt.write(str(node.attrib['id']) +','+ str(tag.attrib['k']) +','+ str(tag.attrib['v']) )
 		
     # Insert ways and Waytag
     # Need to check: 
@@ -103,6 +101,34 @@ def formatData():
     wp.close()
 			       
     
+def impCSV():
+    with open('nf.csv','rb') as fin: 
+        dr = csv.DictReader(fin)
+        to_db = [(i['id'], i['lat'], i['lon']) for i in dr]
+    cur.executemany("INSERT INTO Node (id, lat, lon) VALUES (?, ?, ?);", to_db)
+    
+    with open('wf.csv','rb') as fin: 
+        dr = csv.DictReader(fin)
+        to_db = [(i['id'], i['closed']) for i in dr]
+    cur.executemany("INSERT INTO Node (id, closed) VALUES (?, ?);", to_db)
+    
+    with open('nt.csv','rb') as fin: 
+        dr = csv.DictReader(fin)
+        to_db = [(i['id'], i['k'], i['v']) for i in dr]
+    cur.executemany("INSERT INTO Node (id, k, v) VALUES (?, ?, ?);", to_db)
+    
+    with open('wt.csv','rb') as fin: 
+        dr = csv.DictReader(fin)
+        to_db = [(i['id'], i['k'], i['v']) for i in dr]
+    cur.executemany("INSERT INTO Node (id, k, v) VALUES (?, ?, ?);", to_db)
+    
+    with open('wp.csv','rb') as fin: 
+        dr = csv.DictReader(fin)
+        to_db = [(i['wayid'], i['ordinal'], i['nodeid']) for i in dr]
+    cur.executemany("INSERT INTO Node (wayid, ordinal, nodeid) VALUES (?, ?, ?);", to_db)    
+    
+    con.commit()
+    con.close()    
 
 
 def main():
@@ -112,6 +138,9 @@ def main():
     
     # Load XML and insert the data
     formatData()
+    
+    # Load CSV into database
+    impCSV()
     
     
 if __name__ == "__main__":    

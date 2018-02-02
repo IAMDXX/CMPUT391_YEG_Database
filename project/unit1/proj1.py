@@ -8,7 +8,7 @@ import sqlite3
 #conn = sqlite3.connect(sqlite_add)
 
 
-parser = ET.iterparse('edmonton.osm')
+parser = ET.iterparse('test.osm')
 conn = sqlite3.connect("./proj1.db")
 cur = conn.cursor()  
 nodes = dict()
@@ -93,7 +93,7 @@ def formatData():
                 writer3.writerow( {'id': str(element.attrib['id']), 'ordi': str(i), 'nodeid': str(way_pts[i])} )
             
             for i in range(len(k)):
-                writer4.writerow({'id': str(element.attrib['id']), 'k': k[i], 'v': v[i]} )
+                writer4.writerow({'id': str(element.attrib['id']), 'k': k[i].encode('utf-8'), 'v': v[i].encode('utf-8')} )
                 
             element.clear()
     csvfile1.close()
@@ -116,13 +116,13 @@ def impCSV():
     
     with open('nt.csv','rb') as fin: 
         dr = csv.reader(fin)
-        to_db = [(i[0], str(i[1]), str(i[2])) for i in dr]
+        to_db = [(i[0], str(i[1].decode('utf-8')), str(i[2]).decode('utf-8')) for i in dr]
     cur.executemany("INSERT INTO Nodetag (id, k, v) VALUES (?, ?, ?);", to_db)
     
     with open('wt.csv','rb') as fin: 
         dr = csv.DictReader(fin)
         for i in dr:
-            cur.execute("INSERT INTO Waytag (id, k, v) VALUES (?, ?, ?);", (i['id'],i['k'],i['v']))
+            cur.execute("INSERT INTO Waytag (id, k, v) VALUES (?, ?, ?);", (i['id'],i['k'].decode('utf-8'),i['v'].decode('utf-8')))
     
     with open('wp.csv','rb') as fin: 
         dr = csv.DictReader(fin)

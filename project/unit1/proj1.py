@@ -11,6 +11,7 @@ import sqlite3
 parser = ET.iterparse('test.osm')
 conn = sqlite3.connect("./proj1.db")
 cur = conn.cursor()  
+#cur.execute('PRAGMA foreign_keys = ON;')
 nodes = dict()
 
 
@@ -149,15 +150,37 @@ def createTable():
         "CREATE TABLE Way ( id INTEGER PRIMARY KEY, closed BOOLEAN );"
     )
     cur.execute(
-         "CREATE TABLE Waypoint ( wayid INTEGER, ordinal INTEGER, nodeid INTEGER, FOREIGN KEY (wayid) REFERENCES Way(id), FOREIGN KEY (nodeid) REFERENCES Node(id), CHECK (ordinal>=0 AND ordinal < rowid ) );"
+         "CREATE TABLE Waypoint ( wayid INTEGER, ordinal INTEGER, nodeid INTEGER, CONSTRAINT fk_wayid FOREIGN KEY (wayid) REFERENCES Way(id), CONSTRAINT fk_wnid FOREIGN KEY (nodeid) REFERENCES Node(id), CHECK (ordinal>=0 AND ordinal < rowid ) );"
     )    
     cur.execute(
-         "CREATE TABLE Nodetag ( id INTEGER, k TEXT, v TEXT, FOREIGN KEY (id) REFERENCES Node(id) );"
+         "CREATE TABLE Nodetag ( id INTEGER, k TEXT, v TEXT,  CONSTRAINT fk_ntid FOREIGN KEY (id) REFERENCES Node(id) );"
     )
 
     cur.execute(
-         "CREATE TABLE Waytag ( id INTEGER, k TEXT, v TEXT, FOREIGN KEY (id) REFERENCES Way(id) );"
+         "CREATE TABLE Waytag ( id INTEGER, k TEXT, v TEXT,  CONSTRAINT fk_wtid FOREIGN KEY (id) REFERENCES Way(id) );"
     )
+    
+    #Create triggers for checking closed constraint when UPDATE/INSERT/DELETE on waypoint.
+    cur.execute(
+         "CREATE TRIGGER closed_check_IT AFTER INSERT ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) = (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'True' WHERE id = NEW.wayid; END;"
+    )
+    cur.execute(
+         "CREATE TRIGGER closed_check_IF AFTER INSERT ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) != (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'False' WHERE id = NEW.wayid; END;"
+    )
+
+    cur.execute(
+         "CREATE TRIGGER closed_check_UT AFTER UPDATE ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) = (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'True' WHERE id = NEW.wayid; END;"
+    )
+    cur.execute(
+         "CREATE TRIGGER closed_check_UF AFTER UPDATE ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) != (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'False' WHERE id = NEW.wayid; END;"
+    ) 
+    cur.execute(
+         "CREATE TRIGGER closed_check_DT BEFORE DELETE ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = OLD.wayid)) = (SELECT nodeid FROM Waypoint WHERE wayid = OLD.wayid AND ordinal = (SELECT (MAX(ordinal)-1) FROM Waypoint WHERE wayid = OLD.wayid)) BEGIN UPDATE Way SET closed = 'True' WHERE id = OLD.wayid; END;"
+    )
+    cur.execute(
+         "CREATE TRIGGER closed_check_DF BEFORE DELETE ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = OLD.wayid)) != (SELECT nodeid FROM Waypoint WHERE wayid = OLD.wayid AND ordinal = (SELECT (MAX(ordinal)-1) FROM Waypoint WHERE wayid = OLD.wayid)) BEGIN UPDATE Way SET closed = 'False' WHERE id = OLD.wayid; END;"
+    )
+
 
     conn.commit()
 

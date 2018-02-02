@@ -149,7 +149,7 @@ def createTable():
         "CREATE TABLE Way ( id INTEGER PRIMARY KEY, closed BOOLEAN );"
     )
     cur.execute(
-         "CREATE TABLE Waypoint ( wayid INTEGER, ordiinal INTEGER, nodeid INTEGER, FOREIGN KEY (wayid) REFERENCES Way(id), FOREIGN KEY (nodeid) REFERENCES Node(id), CHECK (ordiinal>=0 AND ordiinal < rowid ) );"
+         "CREATE TABLE Waypoint ( wayid INTEGER, ordinal INTEGER, nodeid INTEGER, FOREIGN KEY (wayid) REFERENCES Way(id), FOREIGN KEY (nodeid) REFERENCES Node(id), CHECK (ordiinal>=0 AND ordiinal < rowid ) );"
     )    
     cur.execute(
          "CREATE TABLE Nodetag ( id INTEGER, k TEXT, v TEXT, FOREIGN KEY (id) REFERENCES Node(id) );"

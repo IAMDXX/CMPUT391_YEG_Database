@@ -127,7 +127,7 @@ def impCSV():
     with open('wp.csv','rb') as fin: 
         dr = csv.DictReader(fin)
         for i in dr:
-            cur.execute("INSERT INTO Waypoint (wayid, ordiinal, nodeid) VALUES (?, ?, ?);", (i['id'], i['ordi'], i['nodeid']))    
+            cur.execute("INSERT INTO Waypoint (wayid, ordinal, nodeid) VALUES (?, ?, ?);", (i['id'], i['ordi'], i['nodeid']))    
     
     conn.commit()
     conn.close()   

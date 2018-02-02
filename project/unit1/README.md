@@ -24,6 +24,7 @@ Run: proj1.py with data file: % python proj1.py
       save all the tags and save them into csv if way is not discarded
       
   4. Transfer all the data in CSV files to the db
+  5. Add triggers for checking any INSERT/DELETE/UPDATE on Waypoint that will changes closed constrains. 
   
   
   

@@ -150,7 +150,7 @@ def createTable():
         "CREATE TABLE Way ( id INTEGER PRIMARY KEY, closed BOOLEAN );"
     )
     cur.execute(
-         "CREATE TABLE Waypoint ( wayid INTEGER, ordinal INTEGER, nodeid INTEGER, CONSTRAINT fk_wayid FOREIGN KEY (wayid) REFERENCES Way(id), CONSTRAINT fk_wnid FOREIGN KEY (nodeid) REFERENCES Node(id), CHECK (ordinal>=0 AND ordinal < rowid ) );"
+         "CREATE TABLE Waypoint ( wayid INTEGER, ordinal INTEGER, nodeid INTEGER, CONSTRAINT fk_wayid FOREIGN KEY (wayid) REFERENCES Way(id), CONSTRAINT fk_wnid FOREIGN KEY (nodeid) REFERENCES Node(id));"
     )    
     cur.execute(
          "CREATE TABLE Nodetag ( id INTEGER, k TEXT, v TEXT,  CONSTRAINT fk_ntid FOREIGN KEY (id) REFERENCES Node(id) );"
@@ -160,6 +160,10 @@ def createTable():
          "CREATE TABLE Waytag ( id INTEGER, k TEXT, v TEXT,  CONSTRAINT fk_wtid FOREIGN KEY (id) REFERENCES Way(id) );"
     )
     
+    #Create trigger for checking ordinal number in Waypoint
+    cur.execute(
+         "CREATE TRIGGER ord_check BEFORE INSERT ON Waypoint WHEN  NEW.ordinal< 0 OR NEW.ordinal > (SELECT COUNT(nodeid) FROM Waypoint WHERE wayid = NEW.wayid) BEGIN SELECT RAISE (ABORT,'ERROR: ordinal must be an interger between 0 and the number of nd element in the path!'); END;"
+    )    
     #Create triggers for checking closed constraint when UPDATE/INSERT/DELETE on waypoint.
     cur.execute(
          "CREATE TRIGGER closed_check_IT AFTER INSERT ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) = (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'True' WHERE id = NEW.wayid; END;"

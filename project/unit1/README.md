@@ -12,3 +12,10 @@ Run proj1.py with data file: % python proj1.py
 At present we just done for small data and it runs perfectly but for the orignal data we have some issue that can't be solved.
 
 Issue: data about way can't be written into the CSV file.
+
+Constraints:
+
+Discard the ways with nodes not existing
+Discard the ways with less than 2 nodes
+
+Cheked for the duplicated nodes and ways.

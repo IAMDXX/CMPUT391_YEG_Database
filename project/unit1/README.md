@@ -5,8 +5,9 @@ Task:
 To write and document code to extract all nodes, paths and areas (closed paths) within the City of Edmonton and store them in a SQLite database, together with descriptive tags associated with them.
 
 Getting XML files(i.e. edmonton.osm ): 
+
   1.Extracting Map Data With Osmosis 
-   (minlon="-113.52852" minlat="53.52548" maxlon="-113.52500" maxlat="53.52753")
+  (minlon="-113.52852" minlat="53.52548" maxlon="-113.52500" maxlat="53.52753")
    
     --read-pbf <path to Alberta map>
     --bounding-box bottom=... left=... top=... right=...

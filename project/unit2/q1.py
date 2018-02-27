@@ -16,7 +16,7 @@ def nodeDist(x1,y1,x2,y2):
     deltaY = math.cos(x2)*math.sin(y2) - math.cos(x1)*math.sin(y1)
     deltaZ = math.sin(x2) - math.sin(x1)
     
-    C = sqrt(deltaX^2 + deltaY^2 + deltaZ^2)
+    C = math.sqrt(deltaX*deltaX + deltaY*deltaY + deltaZ*deltaZ)
     
     D = R * C
     
@@ -24,27 +24,27 @@ def nodeDist(x1,y1,x2,y2):
 
 def main(argv): 
     try:
-        conn = sqlite3.connect(argv[0])
+        con = sqlite3.connect(argv[1])
     except:
         print("The database file doesn't exist! ")
         return
-    global con
-    cur = conn.cursor()  
+    cur = con.cursor()  
     
-    nid1 = int(argv[1])
-    nid2 = int(argv[2])
+    nid1 = int(argv[2])
+    nid2 = int(argv[3])
+    print(nid1, nid2)
     
     # get the lat and long of 2 nodes
     cur.execute ("SELECT lat, lon FROM node WHERE node.id = '%d'" % nid1)
-    lat1, lon1 = cur.fetchall()
+    (lat1, lon1) = cur.fetchall()[0]
     
     cur.execute ("SELECT lat, lon FROM node WHERE node.id = '%d'" % nid2)
-    lat2, lon2 = cur.fetchall()    
+    (lat2, lon2) = cur.fetchall()[0]    
     
     con.create_function("nDist", 4, nodeDist)
     
-    cur.execute("select nDist(?, ?, ?, ?)", lat1, lon1, lat2, lon2)
-    print cur.fetchone()[0]
+    cur.execute("select nDist(?, ?, ?, ?)", (lat1, lon1, lat2, lon2))
+    print (cur.fetchone()[0])
 
 
 if __name__ == "__main__":

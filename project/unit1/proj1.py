@@ -11,6 +11,7 @@ import sqlite3
 parser = ET.iterparse('test.osm')
 conn = sqlite3.connect("./proj1.db")
 cur = conn.cursor()  
+#cur.execute('PRAGMA foreign_keys = ON;')
 nodes = dict()
 
 
@@ -127,7 +128,7 @@ def impCSV():
     with open('wp.csv','rb') as fin: 
         dr = csv.DictReader(fin)
         for i in dr:
-            cur.execute("INSERT INTO Waypoint (wayid, ordiinal, nodeid) VALUES (?, ?, ?);", (i['id'], i['ordi'], i['nodeid']))    
+            cur.execute("INSERT INTO Waypoint (wayid, ordinal, nodeid) VALUES (?, ?, ?);", (i['id'], i['ordi'], i['nodeid']))    
     
     conn.commit()
     conn.close()   
@@ -149,15 +150,41 @@ def createTable():
         "CREATE TABLE Way ( id INTEGER PRIMARY KEY, closed BOOLEAN );"
     )
     cur.execute(
-         "CREATE TABLE Waypoint ( wayid INTEGER, ordiinal INTEGER, nodeid INTEGER, FOREIGN KEY (wayid) REFERENCES Way(id), FOREIGN KEY (nodeid) REFERENCES Node(id), CHECK (ordiinal>=0 AND ordiinal < rowid ) );"
+         "CREATE TABLE Waypoint ( wayid INTEGER, ordinal INTEGER, nodeid INTEGER, CONSTRAINT fk_wayid FOREIGN KEY (wayid) REFERENCES Way(id), CONSTRAINT fk_wnid FOREIGN KEY (nodeid) REFERENCES Node(id));"
     )    
     cur.execute(
-         "CREATE TABLE Nodetag ( id INTEGER, k TEXT, v TEXT, FOREIGN KEY (id) REFERENCES Node(id) );"
+         "CREATE TABLE Nodetag ( id INTEGER, k TEXT, v TEXT,  CONSTRAINT fk_ntid FOREIGN KEY (id) REFERENCES Node(id) );"
     )
 
     cur.execute(
-         "CREATE TABLE Waytag ( id INTEGER, k TEXT, v TEXT, FOREIGN KEY (id) REFERENCES Way(id) );"
+         "CREATE TABLE Waytag ( id INTEGER, k TEXT, v TEXT,  CONSTRAINT fk_wtid FOREIGN KEY (id) REFERENCES Way(id) );"
     )
+    
+    #Create trigger for checking ordinal number in Waypoint
+    cur.execute(
+         "CREATE TRIGGER ord_check BEFORE INSERT ON Waypoint WHEN  NEW.ordinal< 0 OR NEW.ordinal > (SELECT COUNT(nodeid) FROM Waypoint WHERE wayid = NEW.wayid) BEGIN SELECT RAISE (ABORT,'ERROR: ordinal must be an interger between 0 and the number of nd element in the path!'); END;"
+    )    
+    #Create triggers for checking closed constraint when UPDATE/INSERT/DELETE on waypoint.
+    cur.execute(
+         "CREATE TRIGGER closed_check_IT AFTER INSERT ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) = (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'True' WHERE id = NEW.wayid; END;"
+    )
+    cur.execute(
+         "CREATE TRIGGER closed_check_IF AFTER INSERT ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) != (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'False' WHERE id = NEW.wayid; END;"
+    )
+
+    cur.execute(
+         "CREATE TRIGGER closed_check_UT AFTER UPDATE ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) = (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'True' WHERE id = NEW.wayid; END;"
+    )
+    cur.execute(
+         "CREATE TRIGGER closed_check_UF AFTER UPDATE ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = NEW.wayid)) != (SELECT nodeid FROM Waypoint WHERE wayid = NEW.wayid AND ordinal = (SELECT MAX(ordinal) FROM Waypoint WHERE wayid = NEW.wayid)) BEGIN UPDATE Way SET closed = 'False' WHERE id = NEW.wayid; END;"
+    ) 
+    cur.execute(
+         "CREATE TRIGGER closed_check_DT BEFORE DELETE ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = OLD.wayid)) = (SELECT nodeid FROM Waypoint WHERE wayid = OLD.wayid AND ordinal = (SELECT (MAX(ordinal)-1) FROM Waypoint WHERE wayid = OLD.wayid)) BEGIN UPDATE Way SET closed = 'True' WHERE id = OLD.wayid; END;"
+    )
+    cur.execute(
+         "CREATE TRIGGER closed_check_DF BEFORE DELETE ON Waypoint WHEN (SELECT nodeid FROM Waypoint WHERE (ordinal = 0 AND wayid = OLD.wayid)) != (SELECT nodeid FROM Waypoint WHERE wayid = OLD.wayid AND ordinal = (SELECT (MAX(ordinal)-1) FROM Waypoint WHERE wayid = OLD.wayid)) BEGIN UPDATE Way SET closed = 'False' WHERE id = OLD.wayid; END;"
+    )
+
 
     conn.commit()
 

@@ -2,6 +2,8 @@
 
 TODO: 
  * Add compilation and execution instructions.
+ * Still not compiling the code.
+ 
 
 
 

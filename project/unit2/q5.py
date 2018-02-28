@@ -18,7 +18,7 @@ with open(tsv_file) as tsvfile:
     tsvreader = csv.reader(tsvfile, delimiter='\t')
     for line in tsvreader:
         attr = [int(line[0]), float(line[1]), float(line[2])]
-        cur.execute("INSERT INTO Node (id, lat, lon) VALUES (?,?,?)", attr)
+        cur.execute("INSERT INTO Node (id, lat, lon) VALUES (?,?,?);", attr)
 
 #commit and close database
     conn.commit() 

@@ -40,9 +40,8 @@ def main(argv):
         v.append(i[i.index('=')+1:])
     for i in range(len(k)):
         cur.execute("SELECT DISTINCT id FROM nodetag WHERE k = ? AND v = ?", (k[i], v[i]))
-        nodes.append(cur.fetchall())
-        nodes = nodes[0]
-        print(nodes)
+        tmp = cur.fetchall()
+        nodes += tmp
         
     for i in range(len(nodes)):
         cur.execute ("SELECT lat, lon FROM node WHERE node.id = ?" , (nodes[i][0],))

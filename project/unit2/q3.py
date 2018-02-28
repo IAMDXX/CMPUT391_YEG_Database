@@ -45,15 +45,10 @@ def main(argv):
     i = 0
     
     while i < len (nodes)-1: 
-        cur.execute ("SELECT lat, lon FROM node WHERE node.id = ?" , (nodes[i][0],))
-        (lat1, lon1) = cur.fetchall()[0]
-  
-        cur.execute ("SELECT lat, lon FROM node WHERE node.id = ?" , (nodes[i+1][0],))
-        (lat2, lon2) = cur.fetchall()[0] 
-          
+        
+        cur.execute("select nDist(n1.lat,n1.lon, n2.lat, n2.lon) FROM node n1, node n2 WHERE n1.id = ? AND n2.id = ?", 
+                        ((nodes[i][0], nodes[i+1][0])))
         i += 1  
-
-        cur.execute("select nDist(?, ?, ?, ?)", (lat1, lon1, lat2, lon2))
         
         tmp = cur.fetchone()[0]
         ans += tmp

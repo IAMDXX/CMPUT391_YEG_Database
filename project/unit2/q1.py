@@ -35,16 +35,10 @@ def main(argv):
     nid2 = int(argv[3])
     #print(nid1, nid2)
     
-    # get the lat and long of 2 nodes
-    cur.execute ("SELECT lat, lon FROM node WHERE node.id = '%d'" % nid1)
-    (lat1, lon1) = cur.fetchall()[0]
-    
-    cur.execute ("SELECT lat, lon FROM node WHERE node.id = '%d'" % nid2)
-    (lat2, lon2) = cur.fetchall()[0]    
-    
     con.create_function("nDist", 4, nodeDist)
     
-    cur.execute("select nDist(?, ?, ?, ?)", (lat1, lon1, lat2, lon2))
+    cur.execute("select nDist(n1.lat,n1.lon, n2.lat, n2.lon) FROM node n1, node n2 WHERE n1.id = ? AND n2.id = ?", 
+                        (nid1, nid2))
     print ("The distance between this two nodes is: "+str(cur.fetchone()[0])+'km')
 
 

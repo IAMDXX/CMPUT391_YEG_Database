@@ -27,11 +27,10 @@ def main(argv):
         con = sqlite3.connect(argv[1])
         cur = con.cursor()  
         cur.execute('PRAGMA foreign_keys = ON;') 
-        cur.execute ("SELECT * FROM node")        
+        cur.execute ("SELECT * FROM node")         
     except:
         print("The database file doesn't exist! ")
         return
-
     con.create_function("nDist", 4, nodeDist)
     k = []
     v = []
@@ -47,12 +46,10 @@ def main(argv):
         nodes += tmp
         
     for i in range(len(nodes)):
-        cur.execute ("SELECT lat, lon FROM node WHERE node.id = ?" , (nodes[i][0],))
-        (lat1, lon1) = cur.fetchall()[0]
         for j in range(i,len(nodes)):
-            cur.execute ("SELECT lat, lon FROM node WHERE node.id = ?" , (nodes[j][0],))
-            (lat2, lon2) = cur.fetchall()[0] 
-            cur.execute("select nDist(?, ?, ?, ?)", (lat1, lon1, lat2, lon2))
+            #print(nodes[i][0])
+            cur.execute("select nDist(n1.lat,n1.lon, n2.lat, n2.lon) FROM node n1, node n2 WHERE n1.id = ? AND n2.id = ?", 
+                        ((nodes[i][0], nodes[j][0])))
             tmp = cur.fetchone()[0]
 
             if tmp > ans:

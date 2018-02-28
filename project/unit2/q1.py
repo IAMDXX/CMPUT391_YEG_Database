@@ -32,7 +32,7 @@ def main(argv):
     
     nid1 = int(argv[2])
     nid2 = int(argv[3])
-    print(nid1, nid2)
+    #print(nid1, nid2)
     
     # get the lat and long of 2 nodes
     cur.execute ("SELECT lat, lon FROM node WHERE node.id = '%d'" % nid1)
@@ -44,7 +44,7 @@ def main(argv):
     con.create_function("nDist", 4, nodeDist)
     
     cur.execute("select nDist(?, ?, ?, ?)", (lat1, lon1, lat2, lon2))
-    print (cur.fetchone()[0])
+    print ("The distance between this two nodes is: "+str(cur.fetchone()[0])+'km')
 
 
 if __name__ == "__main__":

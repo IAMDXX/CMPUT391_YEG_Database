@@ -72,8 +72,8 @@ def main(argv):
         if dist > ans:
             ans = dist
     
-    print("The number of the paths:", len(wayids))
-    print("The longest distance of the path:", ans)
+    print("The number of the paths: "+str(len(wayids)))
+    print("The longest distance of the path: "+str(ans)+'km')
     
 if __name__ == "__main__":
     main(sys.argv[0:])

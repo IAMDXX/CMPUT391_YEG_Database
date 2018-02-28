@@ -38,7 +38,7 @@ def main(argv):
     cur.execute("SELECT DISTINCT wp.nodeid FROM way w, waypoint wp WHERE w.id = ? AND w.id=wp.wayid", (wayid,))
     
     nodes = cur.fetchall()
-    print(nodes)
+    #print(nodes)
     i = 0
     
     while i < len (nodes)-1: 
@@ -54,7 +54,7 @@ def main(argv):
         
         tmp = cur.fetchone()[0]
         ans += tmp
-        print(ans)
+        #print(ans)
 
     print("The length of the way is : "+str(ans)+'km')
     

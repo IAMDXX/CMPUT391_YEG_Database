@@ -4,8 +4,8 @@ import sys
 import csv
 import sqlite3
 
-db_file = "edmonton.db" #sys.argv[1]
-tsv_file = "way.tsv" #sys.argv[2]
+db_file = sys.argv[1]
+tsv_file = sys.argv[2]
 
 #connet to database
 conn = sqlite3.connect(db_file)

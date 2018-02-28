@@ -29,6 +29,7 @@ def main(argv):
         print("The database file doesn't exist! ")
         return
     cur = con.cursor()  
+    cur.execute('PRAGMA foreign_keys = ON;') 
     
     nid1 = int(argv[2])
     nid2 = int(argv[3])

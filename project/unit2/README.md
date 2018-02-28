@@ -8,7 +8,7 @@ TODO:
 
 
 Lab Note on HOW TO WRITE README.md:
-1. "FRAGMD ON" every you connet to the database.
+1. "PRAGMA ON" every you connet to the database.
 2. (opt.) sudo opt-gcd install numpy.py
 3. execution: python < >.py 
 4. assumptions

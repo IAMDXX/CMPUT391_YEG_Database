@@ -25,12 +25,13 @@ def nodeDist(x1,y1,x2,y2):
 def main(argv): 
     try:
         con = sqlite3.connect(argv[1])
-        
+        cur = con.cursor()  
+        cur.execute('PRAGMA foreign_keys = ON;') 
+        cur.execute ("SELECT * FROM node")        
     except:
         print("The database file doesn't exist! ")
         return
-    cur = con.cursor()  
-    cur.execute('PRAGMA foreign_keys = ON;') 
+
     con.create_function("nDist", 4, nodeDist)
     k = []
     v = []

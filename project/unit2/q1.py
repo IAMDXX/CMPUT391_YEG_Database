@@ -5,7 +5,6 @@ import random
 import sqlite3
 import math
 
-DBFile = "edmonton.db"
 db = ""
 
 R = 6378.137 # radius of Earth in km
@@ -25,11 +24,12 @@ def nodeDist(x1,y1,x2,y2):
 def main(argv): 
     try:
         con = sqlite3.connect(argv[1])
+        cur = con.cursor()  
+        cur.execute('PRAGMA foreign_keys = ON;') 
+        cur.execute ("SELECT * FROM node")
     except:
         print("The database file doesn't exist! ")
         return
-    cur = con.cursor()  
-    cur.execute('PRAGMA foreign_keys = ON;') 
     
     nid1 = int(argv[2])
     nid2 = int(argv[3])

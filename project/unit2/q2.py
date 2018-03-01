@@ -34,28 +34,24 @@ def main(argv):
     con.create_function("nDist", 4, nodeDist)
     k = []
     v = []
-    nodes = []
-    ans = -1
-    
+    ans = 0
+    num = 0
     for i in argv[2:]:
-        k.append(i[0:i.index('=')])
-        v.append(i[i.index('=')+1:])
-    for i in range(len(k)):
-        cur.execute("SELECT DISTINCT id FROM nodetag WHERE k = ? AND v = ?", (k[i], v[i]))
-        tmp = cur.fetchall()
-        nodes += tmp
+        k, v = i.split('=')
         
-    for i in range(len(nodes)):
-        for j in range(i,len(nodes)):
-            #print(nodes[i][0])
-            cur.execute("select nDist(n1.lat,n1.lon, n2.lat, n2.lon) FROM node n1, node n2 WHERE n1.id = ? AND n2.id = ?", 
-                        ((nodes[i][0], nodes[j][0])))
-            tmp = cur.fetchone()[0]
+        # get the max dist
+        cur.execute("With mNodes (id, lat, lon) AS (SELECT DISTINCT n.id, n.lat, n.lon FROM node n, nodetag nt WHERE nt.k = ? AND nt.v = ? AND nt.id = n.id ) SELECT max(nDist(n1.lat,n1.lon, n2.lat, n2.lon)) FROM mNodes n1, mNodes n2", (k,v))
+        tmp = cur.fetchone()[0]    
+        #print(tmp)
+        # compare the new max dist with the old one
+        if tmp > ans:
+            ans = tmp
+        # get the number of the nodes 
+        cur.execute("SELECT DISTINCT id FROM nodetag WHERE k = ? AND v = ?", (k, v))
+        num += len(cur.fetchall())
+    
 
-            if tmp > ans:
-                ans = tmp
-
-    print("The number of the nodes: "+str(len(nodes)))
+    print("The number of the nodes: "+str(num))
     print("The longest distance between the nodes: "+str(ans)+'km')
 
 if __name__ == "__main__":

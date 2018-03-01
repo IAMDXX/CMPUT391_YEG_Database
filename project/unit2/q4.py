@@ -36,41 +36,23 @@ def main(argv):
 
     k = []
     v = []
-    
+    ans = 0
+    num = 0
     
     for i in argv[2:]:
-        k.append(i[0:i.index('=')])
-        v.append(i[i.index('=')+1:])
-      
-    wayids = []
-    for i in range(len(k)):
-        cur.execute("SELECT DISTINCT id FROM waytag WHERE k = ? AND v = ?", (k[i], v[i]))
-        tmp = cur.fetchall()
-        wayids += tmp
-        #print(wayids)
-
-    ans = -1
-    
-    for wayid in wayids:
-        cur.execute("SELECT DISTINCT wp.nodeid FROM way w, waypoint wp WHERE w.id = ? AND w.id=wp.wayid", (wayid[0],))
+        k, v = i.split('=')
         
-        nodes = cur.fetchall()
-        i = 0
-        dist = 0
+        cur.execute("WITH RECURSIVE allDist (wid, nid, dist, ord) AS (SELECT wp.wayid, wp.nodeid, 0, 0 FROM waypoint wp, mWays mw WHERE wp.wayid = mw.id AND ordinal = 0 UNION SELECT ad.wid, n2.id, ad.dist+nDist(n1.lat,n1.lon, n2.lat, n2.lon), ord+1 FROM node n1, node n2, waypoint wp, allDist ad WHERE n1.id = ad.nid AND n2.id = wp.nodeid AND wp.wayid = ad.wid AND wp.ordinal = ad.ord + 1), mWays (id) AS (SELECT DISTINCT id FROM waytag WHERE k = ? AND v = ?) SELECT max(dist) FROM allDist" ,(k, v))
         
-        while i < len (nodes)-1: 
-
-          
-            cur.execute("select nDist(n1.lat,n1.lon, n2.lat, n2.lon) FROM node n1, node n2 WHERE n1.id = ? AND n2.id = ?", 
-                        ((nodes[i][0], nodes[i+1][0])))
-            i += 1  
-            
-            dist += cur.fetchone()[0]
-      
-        if dist > ans:
-            ans = dist
+        tmp = cur.fetchone()[0]    
+        # compare the new max dist with the old one
+        if tmp > ans:
+            ans = tmp       
+        
+        cur.execute("SELECT DISTINCT id FROM waytag WHERE k = ? AND v = ?", (k, v))
+        num += len(cur.fetchall())        
     
-    print("The number of the paths: "+str(len(wayids)))
+    print("The number of the paths: "+str(num))
     print("The longest distance of the path: "+str(ans)+'km')
     
 if __name__ == "__main__":

@@ -37,23 +37,11 @@ def main(argv):
     ans = 0
     
     wayid = int(argv[2])
-     
-    cur.execute("SELECT DISTINCT wp.nodeid FROM way w, waypoint wp WHERE w.id = ? AND w.id=wp.wayid", (wayid,))
-    
-    nodes = cur.fetchall()
-    #print(nodes)
-    i = 0
-    
-    while i < len (nodes)-1: 
         
-        cur.execute("select nDist(n1.lat,n1.lon, n2.lat, n2.lon) FROM node n1, node n2 WHERE n1.id = ? AND n2.id = ?", 
-                        ((nodes[i][0], nodes[i+1][0])))
-        i += 1  
-        
-        tmp = cur.fetchone()[0]
-        ans += tmp
-        #print(ans)
-
+    cur.execute("WITH RECURSIVE allDist (wid, nid, dist, ord) AS (SELECT wayid, nodeid, 0, 0 FROM waypoint WHERE wayid = ? AND ordinal = 0 UNION SELECT ad.wid, n2.id, ad.dist+nDist(n1.lat,n1.lon, n2.lat, n2.lon), ord+1 FROM node n1, node n2, waypoint wp, allDist ad WHERE n1.id = ad.nid AND n2.id = wp.nodeid AND wp.wayid = ad.wid AND wp.ordinal = ad.ord + 1) SELECT max(dist) FROM allDist", (wayid,))
+       
+    ans = cur.fetchone()[0]
+    
     print("The length of the way is : "+str(ans)+'km')
     
 if __name__ == "__main__":

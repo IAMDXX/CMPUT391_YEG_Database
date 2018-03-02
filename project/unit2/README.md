@@ -38,3 +38,23 @@ Recurssion with (wid, nodeid, dist, ord):
 
 Grab the ways matching each tag values and then calculate the distance of ways. Then use MAX() to get the largest one and store them. When it comes to another new (k,v) pair, compute again and compare to get the final result.
 
+## Question 5:
+
+Open the database which is passing from the command.
+Turn on foreign key verification by executing 'PRAGMA foreign_keys = ON;' in database.
+Reading the given tsv file row by row and seprate by tabs into a list.
+Inserting the first 3 values as (id, lat, lon) into node table and the rest columns as strings of the form key=values.
+Inserting node id and coressponding key and values into nodetag table.
+commit all changes and closed the database.
+
+## Question 5:
+
+Open the database which is passing from the command.
+Turn on foreign key verification by executing 'PRAGMA foreign_keys = ON;' in database.
+Reading the given tsv file and seprate by tabs into a list.
+Then slice the tsvreader list into two lists. The first list contains the every first non-blank row in the tsv file which contains wayids and tags for way; The second list contains every second non-blank row in tsv file, which contains nodes in the corresponding ways.
+
+We first read the first value from the first list as wayid, and checking closed if the first node in that way is equal to the last nodeid. Inserting wayid and closed=1 if the way is closed into way table, otherwise inserting (wayid,0) into way table. And inseritng the rest columns in the first list as strings of the form key=values.
+Inserting nodeids in the second columnnd and corresponding wayid with order number into waypoint tables.
+Inserting coressponding key and values into waytag table.
+commit all changes and closed the database.

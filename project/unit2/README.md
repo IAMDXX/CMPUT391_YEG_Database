@@ -1,8 +1,9 @@
 # Project 2 README:
 
-TODO: 
- * Add compilation and execution instructions.
- * Still not compiling the code.
+
+Question 1:
+Use Spherical-surface formulae to calculate the distance between two points on the earth.
+Reason: We can assume the earth is nearly spherical so great-circle distance formulas can give the distance between points on the surface of the Earth within and error in about 0.5%.
  
 
 

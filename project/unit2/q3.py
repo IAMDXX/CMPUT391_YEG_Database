@@ -10,17 +10,22 @@ db = ""
 
 R = 6378.137 # radius of Earth in km
 
-def nodeDist(x1,y1,x2,y2):
+def nodeDist(la1,lo1,la2,lo2):
     
-    deltaX = math.cos(x2)*math.cos(y2) - math.cos(x1)*math.cos(y1)
-    deltaY = math.cos(x2)*math.sin(y2) - math.cos(x1)*math.sin(y1)
-    deltaZ = math.sin(x2) - math.sin(x1)
+    x1 = math.radians(la1)
+    y1 = math.radians(lo1)
+    x2 = math.radians(la2)
+    y2 = math.radians(lo2)
     
-    C = math.sqrt(deltaX*deltaX + deltaY*deltaY + deltaZ*deltaZ)
+    dx = x2-x1
+    dy = y2-y1
     
-    D = R * C
+    a = math.sin(dx / 2)**2 + math.cos(x1) * math.cos(x2) * math.sin(dy/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))    
     
-    return D
+    d = R * c
+    
+    return d
 
 def main(argv): 
     try:

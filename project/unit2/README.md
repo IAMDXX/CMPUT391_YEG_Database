@@ -10,6 +10,10 @@ Q3: $ python q3.py edmonton.db wayid
 
 Q4: $ python q4.py edmonton.db key1=value1 key2=value2...
 
+Q5: $ python q5.py edmonton.db sample_node_file.tsv
+
+Q6: $ python q6.py edmonton.db sample_way_file.tsv
+
 
 Question 1:
 

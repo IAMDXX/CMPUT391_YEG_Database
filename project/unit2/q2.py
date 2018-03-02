@@ -40,16 +40,17 @@ def main(argv):
     k = []
     v = []
     ans = 0
-    nodes = {}
+    nodes = []
     
     # get the number of the nodes
     for i in argv[2:]:
         k, v = i.split('=')
         cur.execute("SELECT DISTINCT id FROM nodetag WHERE k = ? AND v = ?", (k, v))
         tmp = cur.fetchall()
-        for j in tmp:
-            if j[0] not in nodes.keys():
-                nodes[j[0]] = 0
+        if nodes != [] :
+            nodes = nodes + list(set(tmp) - set(nodes))
+        else:
+            nodes = tmp
         
     for i in argv[2:]:
         k, v = i.split('=')
@@ -69,3 +70,5 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[0:])
+    
+    

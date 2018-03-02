@@ -44,6 +44,16 @@ def main(argv):
     ans = 0
     num = 0
     ways = []
+    
+    for i in argv[2:]:
+        k, v = i.split('=')
+        cur.execute("SELECT DISTINCT id FROM waytag WHERE k = ? AND v = ?", (k, v))
+        tmp = cur.fetchall()
+        if ways != [] :
+            ways = ways + list(set(tmp) - set(ways))
+        else:
+            ways = tmp   
+    
     for i in argv[2:]:
         k, v = i.split('=')
         
@@ -54,11 +64,13 @@ def main(argv):
         if tmp > ans:
             ans = tmp       
         
-        cur.execute("SELECT DISTINCT id FROM waytag WHERE k = ? AND v = ?", (k, v))
+        
         num += len(cur.fetchall())        
     
-    print("The number of the paths: "+str(num))
+    print("The number of the paths: "+str(len(ways)))
     print("The longest distance of the path: "+str(ans)+'km')
     
 if __name__ == "__main__":
     main(sys.argv[0:])
+    
+    

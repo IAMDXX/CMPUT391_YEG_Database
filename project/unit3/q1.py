@@ -6,7 +6,7 @@ import sqlite3
 import math
 
 #connet to database
-conn = sqlite3.connect('q1.db')
+conn = sqlite3.connect('edmonton.db')
 cur = conn.cursor()
 #turn on foreign key verification
 cur.execute('PRAGMA foreign_keys = ON;')
@@ -44,7 +44,7 @@ node_lat[:] = [str((x_lat - ori_x)*dis_per_lat) for x_lat in node_lat]
 node_lon[:] = [str((y_lon - ori_y)*dis_per_lon) for y_lon in node_lon]
 
 #stdout
-print ".open q1.db"
+print ".open edmonton.db"
 print "CREATE TABLE IF NOT EXISTS nodeCartesian (id INTEGER PRIMARY KEY, x FLOAT, y FLOAT);"
 for index in range(len(node_id_list)):
     print "INSERT INTO nodeCartesian VALUES (%s,%s,%s);" % (node_id_list[index], node_lat[index], node_lon[index]) 

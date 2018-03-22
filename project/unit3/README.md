@@ -2,7 +2,7 @@
 
 TODO: 
  * Q1
-  compiling Q1 by using the following command
-    % cp unit1.sql unit3q1.sql
-    % python q1.py unit1.sql > q1_output
-    % sqlite3 unit3q1.sql < q1_output 
+   Compiling Q1 by using the following command
+   - % cp unit1.sql unit3q1.sql
+   - % python q1.py unit1.sql > q1_output
+   - % sqlite3 unit3q1.sql < q1_output 

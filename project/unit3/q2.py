@@ -3,13 +3,6 @@
 import sys
 import csv
 import sqlite3
-import math
-
-#connet to database
-conn = sqlite3.connect('edmonton.db')
-cur = conn.cursor()
-#turn on foreign key verification
-cur.execute('PRAGMA foreign_keys = ON;')
 
 #Read from command shell
 sql_file = sys.argv[1]
@@ -27,6 +20,3 @@ FROM way w, waypoint wp, nodeCartesian nc
 WHERE w.closed = 1 AND w.id = wp.wayid AND wp.nodeid = nc.id 
 GROUP BY w.id;
 '''
-#close db
-conn.commit()
-conn.close()

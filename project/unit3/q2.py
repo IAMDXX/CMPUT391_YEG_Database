@@ -4,12 +4,8 @@ import sys
 import csv
 import sqlite3
 
-#Read from command shell
-sql_file = sys.argv[1]
-
 #Read sqlfile
 print ".open edmonton.db"
-print ".read %s" % sql_file
 
 #create table
 print "CREATE TABLE IF NOT EXISTS areaMBR(id INTEGER PRIMARY KEY, minX FLOAT, maxX FLOAT, minY FLOAT, maxY FLOAT);"

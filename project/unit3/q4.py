@@ -36,6 +36,7 @@ def main(argv):
           ol = cur.fetchone()
           
           if(ol[0] < 1):
+               execute -= 1
                continue
           
           # Begin to record time

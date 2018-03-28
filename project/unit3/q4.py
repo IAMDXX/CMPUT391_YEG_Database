@@ -10,13 +10,11 @@ def main(argv):
      con = sqlite3.connect(argv[1])
      cur = con.cursor()       
      
-     l = argv[2]
-     k = argv[3]
+     l = int(argv[2])
+     k = int(argv[3])
      
      cur.execute ("select max(x),max(y) from nodeCartesian")
-     max_v = cur.fetchall()
-     max_x = max_v[0][0]
-     max_y = max_v[1][0]
+     max_x,max_y= cur.fetchone()
      
      run_time = 0
      
@@ -46,9 +44,9 @@ def main(argv):
           cur.execute(stmt, (x1,x2, x1,x2, y1,y2, y1,y2))
           end_time = time.time()
           
-          run_time += (start_time - end_time)
+          run_time += (end_time-start_time)
           
-     print(str(k) + '\t' + str(l) + '\t' + str(run_tim/k))
+     print(str(k) + '\t' + str(l) + '\t' + str(run_time/k))
      
 if __name__ == "__main__":
      main(sys.argv[0:])

@@ -49,7 +49,7 @@ def KNN(nodeno):
      brlist = [NODES() for i in range(num_node)]
      
      for i in range(num_node):
-          stmt = "SELECT a.id,a.minX,a.maxX,a.minY,a.maxY FROM areaMBR_rowid ar, areaMBR a WHERE a.id = ar.rowid and ar.nodeno = ? group by a.id"
+          stmt = "SELECT rtreenode(2, data) FROM areaMBR_node WHERE nodeno = ?; "
           cur.execute (stmt, (nlist[i], ))       
           tmpdata = cur.fetchone()
           brlist[i].nid = tmpdata[0]

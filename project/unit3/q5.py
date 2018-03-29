@@ -11,21 +11,19 @@ class NODES:
           self.pruned = False
           self.min_d = float("inf")
           self.minmax_d = float("inf")
-          self.pts = [0.0, 0.0, 0.0, 0.0]
+          self.pts = []
           self.td = 0
           
 cord = [0, 0] 
 k = 0
 NN_nid = []
 NN_d = []
-con = ""
-cur = ""
 
 # K-Nearest Neighbor Search
 def KNN(nodeno):
      
      stmt = "SELECT count(*) FROM areaMBR_parent ap WHERE ap.parentnode = ?"
-     cur.execute(stmt, (node,))
+     cur.execute(stmt, (nodeno,))
      num_node = cur.fetchone()[0]
      
      # if leaf
@@ -44,16 +42,25 @@ def KNN(nodeno):
      
      for i in tmplist:
           nlist.append(i[0])
-     
+     print (nlist)
      # 2. sort the list we got
      brlist = [NODES() for i in range(num_node)]
      
-     for i in range(num_node):
-          stmt = "SELECT rtreenode(2, data) FROM areaMBR_node WHERE nodeno = ?; "
-          cur.execute (stmt, (nlist[i], ))       
-          tmpdata = cur.fetchone()
-          brlist[i].nid = tmpdata[0]
-          brlist[i].pts = tmpdata[1:]
+     stmt = "SELECT rtreenode(2, data) FROM areaMBR_node WHERE nodeno = ?; "
+     cur.execute (stmt, (nodeno, ))      
+     tmpdata = cur.fetchone()[0]
+     tmpdata = tmpdata.split(' ')
+     print (tmpdata)
+     
+     i = 0
+     while (i < (num_node*5)):
+          tmpfd = int(tmpdata[i][1:])
+          print(tmpfd)
+          ind = nlist.index(tmpfd)
+          brlist[ind].nid = tmpfd
+          brlist[ind].pts.append(float(tmpdata[i+1]))
+          brlist[ind].pts[-1] = float(tmpdata[i+4][:-1])     
+          i += 5
      
      # 2.1 calculate the distance
      for i in range(num_node):
@@ -172,8 +179,10 @@ def calLeafDist (nodeno):
 def main(argv):
      
      # Get input
-     cord = argv[2:4]
-     k = argv[4]
+     cord[0] = int(argv[2])
+     cord[1] = int(argv[3])
+     k = int(argv[4])
+     global con, cur
      con = sqlite3.connect(argv[1])
      cur = con.cursor()       
      cur.execute('PRAGMA foreign_keys = ON;') 

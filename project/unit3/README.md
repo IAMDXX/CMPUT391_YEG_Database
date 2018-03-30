@@ -1,6 +1,6 @@
 # Project 3 README:
 
-TODO: 
+## Instruction:
  * Q1:
    Compiling Q1 by using the following command
    - unit1.db is a legal database conforming to the specs of Unit 1
@@ -19,6 +19,8 @@ TODO:
    ```
 * Q3:
    Compiling Q3 by following the instruction in __q3.md__
+   
+   __Note__ : You have to run Q1 and Q2 first.
    
 * Q4: 
    Compiling Q4 by using the following command 

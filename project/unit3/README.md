@@ -3,11 +3,13 @@
 TODO: 
  * Q1:
    Compiling Q1 by using the following command
+   - unit1.db is a legal database conforming to the specs of Unit 1
    ```
-   % cp unit1.db unit3q1.db
+   % cp unit1.db unit3q1.db
    % python3 q1.py unit1.db > q1_output
-   % sqlite3 unit3q1.db < q1_output 
+   % sqlite3 unit3q1.db < q1_output
    ```
+
  * Q2:
    Compiling Q2 by using the following command
    ```

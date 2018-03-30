@@ -1,7 +1,7 @@
 # Project 3 README:
 
 ## Instruction:
- * Q1:
+### Q1:
    - Created a new table __nodeCartesian(id, x, y)__
    - __id__ is the __primary key__; __x, y__ are the __Cartesian coordinates__ of nodes in __node__ table from Proj1 
    - Converting __latitude and longitude__ into Cartesian coordinates (1 unit = 1 meter) __y, x__ by using constants
@@ -20,7 +20,7 @@
    % sqlite3 unit3q1.db < q1_output
    ```
 
- * Q2:
+### Q2:
    - Create a table areaMBR(id, minX, maxX, minY, maxY); __id__ is the __primary key__
    - Store the id and the Cartesian coordinates of the __minimum bounding__ rectangle of every __closed__ way 
    
@@ -32,7 +32,7 @@
    % sqlite3 unit3q2.db < q2_output
    ```
    
-* Q3:
+### Q3:
    - Create two SQLite databases: __unit3q3_btree.db__ and __unit3q3_rtree.db__
    - __unit3q3_btree.db__: separate single column __B+tree__ indexes on each of the coordinates of the areaMBR 
    - __unit3q3_rtree.db__: a 2D __R-tree__ index populated with the areas of the areaMBR
@@ -40,7 +40,7 @@
    
 :  Compiling Q3 by following the instruction in __q3.md__
    
-* Q4: 
+### Q4: 
    - Comparing the execution times of similar queries on __unit3q3_btree.db__ and __unit3q3_rtree.db__
    - Computes the average time out of k=100 runs and l is chosen from {25, 50, 75, 100, 125}
    - To find the number of areas from areaMBR that are contained in a randomly generated bounding rectangle
@@ -57,7 +57,7 @@
    % python3 q4.py unit3q3_rtree.db k l
    ```
    
-* Q5:
+### Q5:
    - Implementing the algorithm for answering nearest neighbor queries described in the __NN.pdf__ paper:
      - N. Roussopoulos, S. Kelley, and F. Vincent. Nearest neighbor queries. InProceedings of the 1995 ACM SIGMOD International Conference on Management of Data, San Jose, California, May 22-25, 1995., 71-79. ACM Press, 1995.doi:10.1145/223784.223794. 
    - Unit3q3_rtree.db is from q3
